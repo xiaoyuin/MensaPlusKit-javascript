@@ -1,6 +1,6 @@
 {
   "name": "mensa-plus-kit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A small library to access the latest menus of all student canteens in Dresden.",
   "author": "Xiaoyu Yin",
   "license": "MIT",
@@ -10,6 +10,10 @@
     "dresden",
     "mensaplus"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaoyuin/MensaPlusKit-javascript.git"
+  },
   "devDependencies": {},
   "dependencies": {
     "moment": "^2.21.0",

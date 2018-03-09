@@ -46,7 +46,7 @@ function getMenu(date, callback) {
 }
 
 function getDetail(callback) {
-
+    //TODO: Not implemented yet
 }
 
 module.exports = {
