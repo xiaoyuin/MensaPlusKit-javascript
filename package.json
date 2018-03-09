@@ -1,0 +1,19 @@
+{
+  "name": "mensa-plus-kit",
+  "version": "0.0.1",
+  "description": "A small library to access the latest menus of all student canteens in Dresden.",
+  "author": "Xiaoyu Yin",
+  "license": "MIT",
+  "main": "index.js",
+  "keywords": [
+    "mensa",
+    "dresden",
+    "mensaplus"
+  ],
+  "devDependencies": {},
+  "dependencies": {
+    "moment": "^2.21.0",
+    "request": "~2.83.0",
+    "dom-parser": "^0.1.5"
+  }
+}
