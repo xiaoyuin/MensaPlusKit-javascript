@@ -1,12 +1,20 @@
+import {Info, Meal} from "./meal";
+
 var canteenAlias = {
     "Mensa WUeins / Sportsbar": "Mensa WUeins",
     "BioMensa U-Boot (Bio-Code-Nummer: DE-ÖKO-021)": "BioMensa U-Boot"
 }
 
-module.exports = {
-    // parse the website from the canteen's urlMeals, return incomplete meals
-    parseMenu: function (doc, base_url) {
+export class Parser {
+    constructor(doc, url) {
+        this.doc = doc;
+        this.base_url = url;
+    }
+
+    parseMenu() {
         // not sure if type needs to be checked or not
+        let doc = this.doc;
+        let base_url = this.base_url;
         // console.log(doc)
         var meals = []
 
@@ -14,40 +22,42 @@ module.exports = {
         // console.log(tables)
         for (var i = 0; i < tables.length; i++) {
             var table = tables[i]
-            if (table.id != 'aktionen') {
+            if (table.id !== 'aktionen') {
                 var dateString = table.getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].getElementsByTagName('th')[0].textContent
                 if (!dateString.startsWith("Angebot")) {
                     continue
                 }
-                var dateJSON = parseTime2(dateString)
+                var dateJSON = parseTimeMoment(dateString)
                 var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr')
                 for (var j = 0; j < rows.length; j++) {
                     var row = rows[j]
-                    var iskeinangebot = row.getElementsByClassName('keinangebot').length != 0
+                    var iskeinangebot = row.getElementsByClassName('keinangebot').length !== 0
                     if (iskeinangebot) {
                         // no meals to be parsed (should)
                         // console.debug("No meals today")
                     } else {
                         var infos = row.getElementsByClassName('info')
-                        if (infos.length != 0) {
-                            var meal = {
+                        if (infos.length !== 0) {
+                            let info = new Info();
+                            Object.assign(info, {
                                 name: infos[0].textContent,
                                 date: dateJSON.dateString,
                                 dateObject: dateJSON.dateObject,
                                 category: 'Information',
                                 slot: 'Information',
                                 urlDetail: null
-                            }
-                            meals.push(meal)
+                            });
+                            meals.push(info)
                         } else {
                             // parsing meal item starts
                             var item = row.getElementsByClassName('text')[0]
                             if (item) {
-                                var meal = {
+                                let meal = new Meal();
+                                Object.assign(meal, {
                                     name: item.textContent,
                                     date: dateJSON.dateString,
                                     dateObject: dateJSON.dateObject,
-                                }
+                                });
 
                                 // parse urlDetail
                                 var urlDetail = row.getElementsByTagName('a')[0]
@@ -98,9 +108,11 @@ module.exports = {
         }
 
         return meals
-    },
-    // parse the website from the meal's urlDetail, return complete meal information (ideal)
-    parseMeal: function (doc, base_url, base_meal) {
+    }
+
+    parseMeal(base_meal) {
+        let doc = this.doc;
+        let base_url = this.base_url;
         var meal = base_meal
 
 // parse slot information
@@ -115,7 +127,7 @@ module.exports = {
                 startIndex = slot.indexOf(base_meal.canteenName) + base_meal.canteenName.length
             }
             var endIndex = slot.indexOf('vom')
-            if (startIndex != -1 && endIndex != -1) {
+            if (startIndex !== -1 && endIndex !== -1) {
                 meal.slot = slot.substring(startIndex, endIndex).trim()
             }
         }
@@ -155,16 +167,16 @@ module.exports = {
 
 // parsing ends
         return meal
-    },
+    }
 
-    parseToday: function (doc) {
+    parseToday() {
         var meals = {}
 
         var tables = doc.getElementById('spalterechtsnebenmenue').getElementsByTagName('table')
         // console.log(tables)
         for (var i = 0; i < tables.length; i++) {
             var table = tables[i]
-            if (table.id != 'aktionen') {
+            if (table.id !== 'aktionen') {
                 var canteenName = table.getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].getElementsByTagName('th')[0].textContent
                 if (!canteenName.startsWith("Angebot")) {
                     continue
@@ -177,7 +189,7 @@ module.exports = {
                 var count = 0
                 for (var j = 0; j < rows.length; j++) {
                     var row = rows[j]
-                    var iskeinangebot = row.getElementsByClassName('keinangebot').length != 0
+                    var iskeinangebot = row.getElementsByClassName('keinangebot').length !== 0
                     if (iskeinangebot) {
                         // no meals to be parsed (should)
                         break
@@ -190,11 +202,10 @@ module.exports = {
             }
         }
         return meals
-    },
-
+    }
 }
 
-function parseTime2(dateString) {
+function parseTimeMoment(dateString) {
     let moment = require("moment")
     moment.locale("de");
     let format = "dddd, DD. MMMM YYYY"
