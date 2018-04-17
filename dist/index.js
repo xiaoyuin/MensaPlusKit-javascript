@@ -1,18 +1,7 @@
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _canteen = require("./libs/canteen");
-
-Object.keys(_canteen).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _canteen[key];
-    }
-  });
-});
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./libs/canteen"));
 //# sourceMappingURL=index.js.map
