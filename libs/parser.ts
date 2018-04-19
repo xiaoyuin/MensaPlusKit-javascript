@@ -1,8 +1,6 @@
 import {Info, Meal, MenuItem} from "./models";
 
-import * as moment from "moment";
-import {Moment} from "moment";
-import * as parse5 from "parse5";
+import { parseTimeMoment } from "./utils";
 
 var canteenAlias = {
     "Mensa WUeins / Sportsbar": "Mensa WUeins",
@@ -19,16 +17,29 @@ export class Parser {
     date: Date;
     mId: number;
 
-    constructor(doc, baseUrl: string, canteenName: string, date: Date, mId: number) {
+    constructor(doc, baseUrl: string) {
         this.doc = doc;
         this.baseUrl = baseUrl;
-        this.date = date;
+    }
+
+    setCanteenName(canteenName: string): Parser {
         this.canteenName = canteenName;
+        return this;
+    }
+
+    setDate(date: Date): Parser {
+        this.date = date;
+        return this;
+    }
+
+    setMId(mId: number): Parser {
         this.mId = mId;
+        return this;
     }
 
     parseMenu(): MenuItem[] {
 
+        let canteenName = this.canteenName;
         // not sure if type needs to be checked or not
         let doc = this.doc;
         let base_url = this.baseUrl;
@@ -60,6 +71,7 @@ export class Parser {
                             info.date = dateJSON.dateString;
                             info.dateObject = dateJSON.dateObject;
                             info.category = "information";
+                            info.canteenName = canteenName;
                             meals.push(info)
                         } else {
                             // parsing meal item starts
@@ -71,6 +83,7 @@ export class Parser {
                                 meal.category = "food";
                                 meal.date = dateJSON.dateString;
                                 meal.dateObject = dateJSON.dateObject;
+                                meal.canteenName = canteenName;
 
                                 // parse urlDetail
                                 let urlDetail = row.getElementsByTagName('a')[0];
@@ -216,14 +229,6 @@ export class Parser {
         }
         return meals
     }
-}
-
-function parseTimeMoment(dateString): {dateString: string, dateObject: Date | Moment} {
-    moment.locale("de");
-    let format = "dddd, DD. MMMM YYYY";
-    let date = moment(dateString, format);
-    date = date.locale("zh-cn");
-    return {dateString: date.format('L'), dateObject: date}
 }
 
 function rel2abs(base: string, relative: string): string {

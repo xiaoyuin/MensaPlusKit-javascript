@@ -1,4 +1,38 @@
 import * as moment from "moment"
+import * as request from 'request'
+import * as DomParser from "dom-parser"
+
+export function requestWebsite(url:string, onSuccess: (website: string) => void, onError?: (err) => void) {
+    
+    request(url, (error, response, body) => {
+        if(error) {
+            if (onError) {
+                onError(error);
+            }
+        } else {
+            if (response.statusCode === 200) {
+                onSuccess(body);
+            } else {
+                if (onError) {
+                    onError(new Error("Unable to connect to StudentenWerk server"));                    
+                }
+            }
+        }
+    });
+
+}
+
+export function createDOM(website: string): any {
+    return new DomParser().parseFromString(website);
+}
+
+export function parseTimeMoment(dateString): {dateString: string, dateObject: Date} {
+    moment.locale("de");
+    let format = "dddd, DD. MMMM YYYY";
+    let date = moment(dateString, format);
+    date = date.locale("zh-cn");
+    return {dateString: date.format('L'), dateObject: date.toDate()}
+}
 
 export function formatTime(date) {
     let year = date.getFullYear();

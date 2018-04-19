@@ -70,4 +70,4 @@ function transformToDateOnly(dateTime) {
     return new Date(dateTime.getFullYear(), dateTime.getMonth(), dateTime.getDate());
 }
 console.log(getWeekIndexRelativeToToday(new Date(2018, 2, 4, 12, 15)));
-//# sourceMappingURL=util.js.map
+//# sourceMappingURL=utils.js.map

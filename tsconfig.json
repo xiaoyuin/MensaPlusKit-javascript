@@ -6,7 +6,7 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "outDir": "./dist/",
-    "allowJs": true
+    "declaration": true
   },
   "exclude": [
     "node_modules"

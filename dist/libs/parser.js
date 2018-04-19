@@ -1,21 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const models_1 = require("./models");
-const moment = require("moment");
+const utils_1 = require("./utils");
 var canteenAlias = {
     "Mensa WUeins / Sportsbar": "Mensa WUeins",
     "BioMensa U-Boot (Bio-Code-Nummer: DE-ÖKO-021)": "BioMensa U-Boot",
     "Kantine der Landesanstalt für Landwirtschaft": "Kindertagesstätten"
 };
 class Parser {
-    constructor(doc, baseUrl, canteenName, date, mId) {
+    constructor(doc, baseUrl) {
         this.doc = doc;
         this.baseUrl = baseUrl;
-        this.date = date;
+    }
+    setCanteenName(canteenName) {
         this.canteenName = canteenName;
+        return this;
+    }
+    setDate(date) {
+        this.date = date;
+        return this;
+    }
+    setMId(mId) {
         this.mId = mId;
+        return this;
     }
     parseMenu() {
+        let canteenName = this.canteenName;
         // not sure if type needs to be checked or not
         let doc = this.doc;
         let base_url = this.baseUrl;
@@ -30,7 +40,7 @@ class Parser {
                 if (!dateString.startsWith("Angebot")) {
                     continue;
                 }
-                let dateJSON = parseTimeMoment(dateString);
+                let dateJSON = utils_1.parseTimeMoment(dateString);
                 let rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
                 for (let j = 0; j < rows.length; j++) {
                     let row = rows[j];
@@ -47,6 +57,7 @@ class Parser {
                             info.date = dateJSON.dateString;
                             info.dateObject = dateJSON.dateObject;
                             info.category = "information";
+                            info.canteenName = canteenName;
                             meals.push(info);
                         }
                         else {
@@ -59,6 +70,7 @@ class Parser {
                                 meal.category = "food";
                                 meal.date = dateJSON.dateString;
                                 meal.dateObject = dateJSON.dateObject;
+                                meal.canteenName = canteenName;
                                 // parse urlDetail
                                 let urlDetail = row.getElementsByTagName('a')[0];
                                 if (urlDetail) {
@@ -199,13 +211,6 @@ class Parser {
     }
 }
 exports.Parser = Parser;
-function parseTimeMoment(dateString) {
-    moment.locale("de");
-    let format = "dddd, DD. MMMM YYYY";
-    let date = moment(dateString, format);
-    date = date.locale("zh-cn");
-    return { dateString: date.format('L'), dateObject: date };
-}
 function rel2abs(base, relative) {
     if (relative.startsWith('//')) {
         return "https:" + relative;

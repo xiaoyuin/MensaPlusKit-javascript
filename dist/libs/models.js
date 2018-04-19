@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const parser_1 = require("./parser");
-const utils = require("./util");
-const request = require("request");
-const DomParser = require("dom-parser");
+const utils = require("./utils");
 class Canteen {
     constructor(json) {
         Object.assign(this, json);
@@ -18,25 +16,15 @@ class Canteen {
         let url = urls[weekIndex];
         let name = this.name;
         let mId = this.mId;
-        request(url, function (error, response, body) {
-            if (error) {
-                callback(error, null);
-            }
-            else {
-                if (response.statusCode === 200) {
-                    let parser = new parser_1.Parser(new DomParser().parseFromString(body), url, name, new Date(), mId);
-                    let meals = parser.parseMenu();
-                    callback(null, meals.map((m) => {
-                        if (name) {
-                            m.canteenName = name;
-                        }
-                        return m;
-                    }));
-                }
-                else {
-                    console.error("Can not connect to StudentenWerk server");
-                }
-            }
+        utils.requestWebsite(url, (website) => {
+            let parser = new parser_1.Parser(utils.createDOM(website), url)
+                .setCanteenName(name)
+                .setDate(date)
+                .setMId(mId);
+            let meals = parser.parseMenu();
+            callback(null, meals);
+        }, (error) => {
+            callback(error, null);
         });
     }
     getDetail(callback) {
@@ -64,21 +52,13 @@ class Meal extends MenuItem {
     getMealDetail(callback) {
         let url = this.urlDetail;
         let meal = this;
-        request(url, function (error, response, body) {
-            if (error) {
-                callback(error, null);
-            }
-            else {
-                if (response.statusCode === 200) {
-                    let parser = new parser_1.Parser(new DomParser().parseFromString(body), url, meal.canteenName, new Date(), -1);
-                    let newMeal = parser.parseMeal(meal);
-                    Object.assign(meal, newMeal);
-                    callback(null, newMeal);
-                }
-                else {
-                    console.error("Can not connect to StudentenWerk server");
-                }
-            }
+        utils.requestWebsite(url, (website) => {
+            let parser = new parser_1.Parser(utils.createDOM(website), url);
+            let newMeal = parser.parseMeal(meal);
+            Object.assign(meal, newMeal);
+            callback(null, newMeal);
+        }, (error) => {
+            callback(error, null);
         });
     }
 }
