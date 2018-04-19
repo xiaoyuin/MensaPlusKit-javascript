@@ -12,5 +12,5 @@ canteen.getMenu(new Date(), function (err, meals) {
     })
 });
 
-moment.locale("cn")
+moment.locale("cn");
 console.log(moment.weekdays());
