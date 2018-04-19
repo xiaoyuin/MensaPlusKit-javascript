@@ -15,12 +15,12 @@
     "url": "https://github.com/xiaoyuin/MensaPlusKit-javascript.git"
   },
   "devDependencies": {
+    "@types/node": "^9.6.5",
     "awesome-typescript-loader": "^5.0.0",
     "source-map-loader": "^0.2.3",
     "typescript": "^2.8.1"
   },
   "dependencies": {
-    "@types/node": "^9.6.5",
     "dom-parser": "^0.1.5",
     "moment": "^2.21.0",
     "request": "~2.83.0"

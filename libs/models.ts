@@ -59,17 +59,20 @@ export class Canteen {
         })
 
     }
+
+    getDetail(callback: (err, newCanteen) => void): void {
+
+    }
 }
 
 export class Menu {
 
-    canteen: Canteen;
     canteenName: string;
     date: Date;
     items: MenuItem[];
 
-    constructor(canteen, date) {
-        this.canteen = canteen;
+    constructor(canteenName: string, date: Date) {
+        this.canteenName = canteenName;
         this.date = date;
         this.items = [];
     }

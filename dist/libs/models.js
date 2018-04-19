@@ -39,11 +39,13 @@ class Canteen {
             }
         });
     }
+    getDetail(callback) {
+    }
 }
 exports.Canteen = Canteen;
 class Menu {
-    constructor(canteen, date) {
-        this.canteen = canteen;
+    constructor(canteenName, date) {
+        this.canteenName = canteenName;
         this.date = date;
         this.items = [];
     }

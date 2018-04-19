@@ -1,6 +1,8 @@
 import {Info, Meal, MenuItem} from "./models";
 
 import * as moment from "moment";
+import {Moment} from "moment";
+import * as parse5 from "parse5";
 
 var canteenAlias = {
     "Mensa WUeins / Sportsbar": "Mensa WUeins",
@@ -26,6 +28,7 @@ export class Parser {
     }
 
     parseMenu(): MenuItem[] {
+
         // not sure if type needs to be checked or not
         let doc = this.doc;
         let base_url = this.baseUrl;
@@ -215,7 +218,7 @@ export class Parser {
     }
 }
 
-function parseTimeMoment(dateString) {
+function parseTimeMoment(dateString): {dateString: string, dateObject: Date | Moment} {
     moment.locale("de");
     let format = "dddd, DD. MMMM YYYY";
     let date = moment(dateString, format);
